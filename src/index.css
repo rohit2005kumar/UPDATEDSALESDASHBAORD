@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: Inter, "SF Pro Display", "Segoe UI", Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --color-brand: #627a3d;
+  --color-brand-dark: #4d642d;
+  --color-canvas: #f8f6f1;
+  --color-line: #e7e2d7;
+  --color-ink: #24261f;
+  --color-muted: #7c7d74;
+}
+
+* { box-sizing: border-box; }
+html { background: #f8f6f1; }
+body {
+  margin: 0;
+  min-width: 320px;
+  color: #24261f;
+  font-family: Inter, "SF Pro Display", "Segoe UI", Arial, sans-serif;
+  font-optical-sizing: auto;
+  font-kerning: normal;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.018em;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+img, svg { max-width: 100%; }
+
+/* Shared responsive primitives used across the sales workspace. */
+.dashboard-main { padding: 1rem; }
+.dashboard-table-scroll { overflow-x: auto; overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch; }
+.dashboard-table-scroll > table { margin-bottom: 0.15rem; }
+.responsive-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.responsive-actions > * { min-width: 0; }
+
+@media (min-width: 1024px) {
+  .dashboard-main { padding: 1.75rem; }
+}
+
+@media (max-width: 639px) {
+  .dashboard-card { border-radius: 0.75rem; }
+  .dashboard-main { padding: 0.75rem; }
+  .dashboard-table-scroll { margin-inline: -0.75rem; }
+  .dashboard-table-scroll > table { margin-inline: 0.75rem; }
+  input, select, textarea { max-width: 100%; }
+}
+
+/* Reference-inspired type scale: readable labels, generous headings, compact data. */
+.text-\[9px\] { font-size: 0.75rem; line-height: 1rem; }
+.text-\[10px\] { font-size: 0.8125rem; line-height: 1.125rem; }
+.text-\[11px\] { font-size: 0.8125rem; line-height: 1.125rem; }
+.text-\[13px\] { font-size: 0.9375rem; line-height: 1.25rem; }
+.text-xs { font-size: 0.875rem; line-height: 1.25rem; }
+.text-sm { font-size: 1rem; line-height: 1.4rem; }
+.text-base { font-size: 1.125rem; line-height: 1.55rem; }
+.text-xl { font-size: 1.75rem; line-height: 2.1rem; }
+.text-2xl { font-size: 2.25rem; line-height: 2.5rem; letter-spacing: -0.045em; }
+.font-extrabold { font-weight: 650; }
+.font-black { font-weight: 700; }
+header.sticky { min-height: 5rem; }
+header.sticky h1.text-base {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 2.35rem;
+  letter-spacing: -0.035em;
+}
+
+/* Warm ivory and botanical olive palette from the dashboard reference. */
+.bg-\[\#fbfaf8\] { background-color: #fffefa; }
+.bg-\[\#edf2ef\] { background-color: #f0f3e9; }
+.bg-stone-50 { background-color: #faf9f5; }
+.text-stone-500, .text-stone-600 { color: #696b62; }
+.text-emerald-600, .text-emerald-700 { color: #5f7938; }
+.bg-emerald-50 { background-color: #eef4e6; }
+.bg-amber-50 { background-color: #f7f3e7; }
+.text-amber-700, .text-amber-800, .text-amber-900 { color: #766326; }
+.border-amber-200 { border-color: #ded4ae; }
+.bg-\[\#32736b\] { background-color: #627a3d; }
+.bg-\[\#25a968\] { background-color: #758c4c; }
+
+.dashboard-shell {
+  background:
+    radial-gradient(circle at 88% 3%, rgba(172, 187, 133, 0.12), transparent 25rem),
+    #f8f6f1;
+}
+.dashboard-card {
+  border: 1px solid #e7e2d7;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 252, 0.94);
+  box-shadow: 0 8px 24px rgba(63, 57, 42, 0.055);
+}
+.dashboard-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+.botanical-divider {
+  background: linear-gradient(90deg, transparent, #dfe5d2 18%, #dfe5d2 82%, transparent);
+  height: 1px;
+}
+
+input, select, textarea {
+  accent-color: #627a3d;
+}
+/* input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(98, 122, 61, 0.1);
+} */
+
+@media (max-width: 640px) {
+  .text-2xl { font-size: 1.75rem; line-height: 2rem; }
+}
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-thumb { background: #d4d0c8; border-radius: 999px; }
