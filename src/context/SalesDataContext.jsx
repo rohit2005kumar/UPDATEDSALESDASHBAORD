@@ -17,6 +17,15 @@ import {
 } from '../services/salesApi'
 
 const SalesDataContext = createContext(null)
+
+/*
+ * Backend/Razorpay is the source of truth for payment status.
+ * The dashboard never flips pending -> success itself; it simply re-reads the
+ * payment-links / orders APIs on a timer so an agent sees SUCCESS appear on
+ * its own once the webhook or verification has landed.
+ */
+const PAYMENT_STATUS_REFRESH_MS = 15000
+
 const emptyData = {
   customers: [],
   orders: [],
@@ -79,14 +88,16 @@ export function SalesDataProvider({ children }) {
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState('')
 
-  const refresh = useCallback(async () => {
+  const load = useCallback(async ({ silent = false } = {}) => {
     if (!isAuthenticated) {
       setData(emptyData)
       return
     }
 
-    setLoading(true)
-    setApiError('')
+    if (!silent) {
+      setLoading(true)
+      setApiError('')
+    }
 
     try {
       const [customerResult, orderResult, productResult, paymentLinkResult, deliveryResult] = await Promise.all([
@@ -106,17 +117,51 @@ export function SalesDataProvider({ children }) {
         deliveries: (deliveryResult.items || []).map(mapDelivery),
       }))
     } catch (error) {
-      setData(emptyData)
-      setApiError(error.message)
+      // A failed background poll must not blank the dashboard the agent is
+      // looking at. Only an explicit refresh surfaces the error state.
+      if (!silent) {
+        setData(emptyData)
+        setApiError(error.message)
+      }
     } finally {
-      setLoading(false)
+      if (!silent) setLoading(false)
     }
   }, [isAuthenticated])
+
+  const refresh = useCallback(() => load({ silent: false }), [load])
 
   useEffect(() => {
     const timer = window.setTimeout(refresh, 0)
     return () => window.clearTimeout(timer)
   }, [refresh])
+
+  /*
+   * AUTOMATIC PAYMENT STATUS REFRESH
+   *
+   * Re-reads payment-links / orders every 15s while the agent is logged in and
+   * the tab is visible. No manual "mark as paid" control exists or is needed.
+   */
+  useEffect(() => {
+    if (!isAuthenticated) return undefined
+
+    const poll = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return
+      load({ silent: true })
+    }
+
+    const timer = window.setInterval(poll, PAYMENT_STATUS_REFRESH_MS)
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') load({ silent: true })
+    }
+
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      window.clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [isAuthenticated, load])
 
   const addCustomer = async form => {
     const customer = await createSalesCustomer({

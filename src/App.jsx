@@ -7,6 +7,8 @@ import Login from './pages/Login'
 import ProtectedRoutes from './pages/ProtectedRoutes'
 import { AuthProvider } from './context/AuthContext'
 import SalesRecordDetail from './pages/SalesRecordDetail'
+import PaymentSuccess from './pages/PaymentSuccess'
+import PaymentFailed from './pages/PaymentFailed'
 
 export default function App() {
   return <AuthProvider>
@@ -23,6 +25,8 @@ export default function App() {
     </Route>
     <Route path="/pay/:token" element={<SalesPayPreview/>} />
     <Route path="/sales/pay/:token" element={<SalesPayPreview />} />
+    <Route path="/payment-success" element={<PaymentSuccess />} />
+    <Route path="/payment-failed" element={<PaymentFailed />} />
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
   </BrowserRouter>

@@ -29,9 +29,12 @@ function paymentLinkState(link, url) {
     const paymentStatus = normalizedStatus(link?.payment_status || link?.paymentStatus || 'pending')
     const expiresAt = link?.expires_at || link?.expiresAt
     const expiry = expiresAt ? new Date(expiresAt).getTime() : NaN
-    const isPaid = paymentStatus === 'paid'
+    // Backend payment_status values are: null | pending | failed | success
+    const isPaid = ['paid', 'success', 'captured'].includes(paymentStatus) || status === 'paid'
     const isExpired = status === 'expired' || (!Number.isNaN(expiry) && expiry <= Date.now())
     const isRevoked = ['revoked', 'cancelled', 'canceled', 'inactive'].includes(status)
+    // A failed attempt does NOT deactivate the link — retry stays available
+    // for as long as the backend still reports link_status = active.
     const isActive = !isPaid && !isExpired && !isRevoked && status === 'active'
     const canSend = isActive && Boolean(url)
     return { status: isPaid ? 'paid' : isExpired ? 'expired' : isRevoked ? 'revoked' : isActive ? 'active' : status || 'none', paymentStatus, expiresAt, isPaid, isActive, canSend }

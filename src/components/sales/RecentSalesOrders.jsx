@@ -6,6 +6,7 @@ import { money } from './OrderSummary'
 export default function RecentSalesOrders({ orders, title = 'Recent sales orders', showViewAll = true }) {
   const navigate = useNavigate()
   const openOrder = id => navigate(`/sales-dashboard/orders/${id}`)
+  
 
   return <div className="dashboard-card overflow-hidden">
     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line p-4">
@@ -30,7 +31,7 @@ export default function RecentSalesOrders({ orders, title = 'Recent sales orders
           <td className="px-4 py-3">{order.phone}</td>
          
           <td className="px-4 py-3 font-bold">{money(order.amount)}</td>
-          <td className="px-4 py-3"><StatusBadge>{order.payment}</StatusBadge></td>
+          <td className="px-4 py-3"><StatusBadge>{order.payment == null ? "Null" : order.payment}</StatusBadge></td>
           <td className="px-4 py-3"><StatusBadge>{order.status}</StatusBadge></td>
           <td className="px-4 py-3"><StatusBadge>{order.message}</StatusBadge></td>
           <td className="px-4 py-3">{order.created}</td>

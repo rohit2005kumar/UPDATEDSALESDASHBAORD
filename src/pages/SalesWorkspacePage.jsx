@@ -29,15 +29,36 @@ const customerAvatarTones = [
 ]
 
 const CUSTOMER_PAGE_SIZE = 9
-const ORDER_PAGE_SIZE = 5
+const ORDER_PAGE_SIZE = 10
 const PAYMENT_LINK_PAGE_SIZE = 10
+const  formatCustomerDate = (value) => {
+  if (!value) return "-";
 
-const formatCustomerDate = value => {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-  return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(date)
-}
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "-";
+
+  const formattedDate = date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  const formattedTime = date.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return `${formattedDate} • ${formattedTime}`;
+};
+
+// const formatCustomerDate = value => {
+//   if (!value) return ''
+//   const date = new Date(value)
+//   if (Number.isNaN(date.getTime())) return ''
+//   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(date)
+// }
 
 export default function SalesWorkspacePage() {
   const { section } = useParams()
@@ -65,14 +86,16 @@ export default function SalesWorkspacePage() {
 }
 
 function SectionContent({ section, customers, orders, deliveries, paymentLinks, user }) {
+  const agent=JSON.parse(localStorage.getItem('agent'))
+  const name=agent.split('.')[0]
   if (section === 'orders') return <OrdersSection orders={orders} />
   if (section === 'message-deliveries') return <MessageDeliveryTable rows={deliveries} />
   if (section === 'customers') return <CustomersSection customers={customers} />
   if (section === 'payment-links') return <PaymentLinksSection paymentLinks={paymentLinks} />
   if (section === 'reports') return <ReportsSection orders={orders} customers={customers} />
   return <article className="dashboard-card max-w-xl p-4 sm:p-6">
-    <div className="grid size-14 place-items-center rounded-full bg-brand text-lg font-extrabold text-white">{user.initials}</div>
-    <h2 className="mt-4 text-lg font-extrabold">{user.name}</h2><p className="text-xs text-muted">{user.role}</p>
+    <div className="grid size-14 place-items-center rounded-full bg-brand text-lg font-extrabold text-white">{name.split('')[0].toUpperCase()}</div>
+    <h2 className="mt-4 text-lg font-extrabold">{agent}</h2><p className="text-xs text-muted">{user.role}</p>
     <dl className="mt-6 grid gap-3 rounded-xl bg-stone-50 p-4 text-xs sm:grid-cols-2">
       <dt className="text-muted">Workspace</dt><dd className="font-bold">Sales desk</dd>
       <dt className="text-muted">Data source</dt><dd className="font-bold">Live sales data</dd>
@@ -196,6 +219,7 @@ function ReportsSection({ orders, customers }) {
 //   </div>
 // }
 function PaymentLinksSection({ paymentLinks }) {
+  console.log(paymentLinks)
   const [selectedFilter, setSelectedFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -259,7 +283,7 @@ function PaymentLinksSection({ paymentLinks }) {
               onChange={handleFilterChange}
               className="min-w-0 flex-1 rounded-xl border border-line bg-[#faf9f5] px-4 py-3 text-xs outline-none focus:border-brand sm:flex-none"
             >
-              <option value="">All Status</option>
+              <option value="">Payment Link Status</option>
 
               {filterOptions.map((item) => (
                 <option key={item} value={item}>
@@ -334,6 +358,7 @@ function PaymentLinksSection({ paymentLinks }) {
 
                   <td className="px-4 py-3">
                     {formatCustomerDate(link.createdAt) || "—"}
+                   
                   </td>
 
                   <td className="px-4 py-3">
@@ -452,6 +477,7 @@ function OrdersSection({ orders }) {
   const [currentPage, setCurrentPage] = useState(1)
   const fromDateRef = useRef(null);
   const toDateRef = useRef(null);
+  console.log(orders)
 
   const statuses = useMemo(() => [...new Set(
     orders

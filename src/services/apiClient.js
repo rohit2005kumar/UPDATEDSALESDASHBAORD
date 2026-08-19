@@ -21,10 +21,15 @@ const allowedEndpoints = [
   ['post', /^\/sales\/orders\/[^/]+\/payment-link$/],
   ['get', /^\/sales\/pay\/[^/]+$/],
   ['post', /^\/sales\/pay\/[^/]+\/create-payment$/],
+  // Backend is the only source of payment truth. The customer page must be
+  // allowed to POST the Razorpay handler payload here, and to poll status.
+  ['post', /^\/sales\/pay\/[^/]+\/verify-payment$/],
+  ['get', /^\/sales\/pay\/[^/]+\/status$/],
   ['post', /^\/sales\/orders\/[^/]+\/send-sms$/],
   ['post', /^\/sales\/orders\/[^/]+\/send-whatsapp$/],
   ['post', /^\/sales\/orders\/[^/]+\/payments\/sync$/],
   ['get', /^\/sales\/payment-links$/],
+  ['get', /^\/sales\/payment-links\/[^/]+$/],
   ['get', /^\/sales\/message-deliveries$/],
 ]
 

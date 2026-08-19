@@ -25,6 +25,7 @@ export default function Login() {
     try {
       await login(form)
       navigate(location.state?.from?.pathname || '/sales-dashboard', { replace: true })
+      localStorage.setItem("agent",JSON.stringify(form.email))
     } catch (requestError) {
       setError(requestError.message)
     } finally {
